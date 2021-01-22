@@ -4,15 +4,13 @@ include_once('../database.php');
 
 //login user
 if (isset($_REQUEST['submit']) && $_REQUEST['submit'] == "login") {
-
-    //    echo "<pre>";
-    //    print_r($_REQUEST);die;
     unset($_REQUEST['submit']);
     $_REQUEST['uPassword'] = md5($_REQUEST['uPassword']);
 
     if ($getdata = $db->selectQuery("select * from w_users where uEmail='{$_REQUEST['uEmail']}' and uPassword='{$_REQUEST['uPassword']}' and uRole='user'")) {
-
-        $uToken = $getdata[0]['uToken'];
+        // $uToken = $getdata[0]['uToken'];
+        $uToken = md5(uniqid($getdata[0]['uMobile'], true));
+        $db->updateData("w_users", array("uToken" => $uToken), "uEmail='{$_REQUEST['uEmail']}' and uPassword='{$_REQUEST['uPassword']}'");
         $_SESSION['uToken'] = $uToken;
         header('location: ../education/index.php');
     } else {

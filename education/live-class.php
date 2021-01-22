@@ -1,7 +1,5 @@
 <?php
 include_once("include/quiz_header.php");
-// where DATE_FORMAT(start_time, '%Y-%m-%d') = DATE(NOW())
-//echo $formatDate;die;
 
 $live_classData = $db->selectQuery("select * from live_class_data where (status = 0 or status = 1) and DATE_FORMAT(start_time, '%Y-%m-%d') = DATE(NOW()) order by id DESC");
 ?> 
@@ -71,17 +69,6 @@ $live_classData = $db->selectQuery("select * from live_class_data where (status 
                             <p class="card-text ml-auto text-secondary cardp">₹<?php echo $data['amount']; ?></p>
                         </div>
 
-                        <?php
-//                        $currntDate = date("Y-m-d h:i:s");
-//                        $currntDate = strtotime($currntDate);
-//                        $start_time = $data['start_time'];
-//                        $start_time = strtotime($start_time);
-//                        $end_time = $data['end_time'];
-//                        $end_time = strtotime($end_time);
-//
-//                        $start = time_elapsed_string($data['start_time']);
-//                        $enddtime = time_elapsed_string($data['end_time']);
-                        ?>
                         <div style="display:flex;">
                             <p class="card-text text-secondary cardp showtext mb-1" id="showtext"></p>
                             <p class="card-text ml-auto text-success cardp play_time end_time"></p>
@@ -140,15 +127,11 @@ include_once("include/quiz_footer.php");
             var ele = $(this);
             var starttime = ele.attr("starttime");
             var data_id = ele.attr("data-id");
-            //            console.log(starttime);
-            // Update the count down every 1 second
 
             x[data_id] = setInterval(function () {
 
                 var countDownDate = new Date(starttime).getTime();
 
-//                ele.find('.quiztext').hide();
-//                ele.find('.quiztext').hide();
                 ele.find('.showtext').text('Play Video After');
                 // Get today's date and time
                 var now = new Date().getTime();
@@ -165,9 +148,7 @@ include_once("include/quiz_footer.php");
                 // Output the result in an element with id="demo"
 
                 ele.find('.play_time').text(hours + "h " + minutes + "m " + seconds + "s ");
-                //                console.log(document.getElementsByClassName("play_time").innerHTML = hours + "h "
-                //                        + minutes + "m " + seconds + "s ");
-
+            
                 // If the count down is over, write some text 
                 if (distance < 0) {
 
@@ -179,8 +160,6 @@ include_once("include/quiz_footer.php");
 
                     clearInterval(x[data_id]);
                     document.getElementsByClassName("play_time").innerHTML = "Play Quiz!";
-                    //                     $('.play_video').addClass('d-none');
-                    //                    $('.play_quiz').removeClass('d-none');
                 }
 
             }, 1000);
@@ -214,13 +193,8 @@ include_once("include/quiz_footer.php");
                 var minutes = Math.floor((distancee % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distancee % (1000 * 60)) / 1000);
 
-                // Output the result in an element with id="demo"
-                //                document.getElementsByClassName("play_time").innerHTML = hours + "h "
-                //                        + minutes + "m " + seconds + "s ";
                 ele.find('.quiztime').text(hours + "h " + minutes + "m " + seconds + "s ");
-                //                console.log(document.getElementsByClassName("play_time").innerHTML = hours + "h "
-                //                        + minutes + "m " + seconds + "s ");
-
+               
                 // If the count down is over, write some text 
                 if (distancee < 0) {
                     ele.find('.quiztext').hide();
@@ -232,9 +206,6 @@ include_once("include/quiz_footer.php");
                     ele.find('.play_quiz').removeClass('d-none');
 
                     clearInterval(y[data_id]);
-                    //                    document.getElementsByClassName("play_time").innerHTML = "Play Quiz!";
-                    //                    $('.play_video').addClass('d-none');
-                    //                    $('.play_quiz').removeClass('d-none');
                 }
 
             }, 1000);

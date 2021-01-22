@@ -2,11 +2,10 @@
 
 require_once("../../database.php");
 
-
 // update user profile
 if(isset($_REQUEST['update']) && $_REQUEST['update']=="update profile"){
-    echo "<pre>";
-    print_r($_REQUEST);
+    // echo "<pre>";
+    // print_r($_REQUEST);
     unset($_REQUEST['update']);
 
     if($db->updateData("w_users", array("uName"=>$_REQUEST['uName'], "uEmail"=>$_REQUEST['uEmail'], "uMobile"=>$_REQUEST['uMobile'], "uPostcode"=>$_REQUEST['uPostcode']) ,"ID={$_REQUEST['ID']}")){
@@ -28,9 +27,8 @@ if(isset($_REQUEST['update']) && $_REQUEST['update']=="update password"){
         $_SESSION['updatepass'] = "Password Updated Successfully!";
         header('location: ../changepass.php');
     } else {
-        $_SESSION['failed'] = "New and confirm password not match!";
+        $_SESSION['failed'] = "Passwords are not match!";
         header('location: ../changepass.php');
     }
-    
-    
+
 }

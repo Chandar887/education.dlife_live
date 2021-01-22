@@ -9,4 +9,5 @@ return array(
     'Requests' => array($vendorDir . '/rmccue/requests/library'),
     'JsonMapper' => array($vendorDir . '/netresearch/jsonmapper/src'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
+    'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
 );

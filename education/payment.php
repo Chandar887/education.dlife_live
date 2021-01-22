@@ -5,10 +5,14 @@ require_once('../phpassets/vendor/autoload.php');
 //print_r($Api);die;
 
 $getUserData = array();
+$catName = array();
 if (isset($_REQUEST['uid']) && isset($_REQUEST['parent_category']) && isset($_REQUEST['amount'])) {
 
     $getUserData = $db->selectQuery("select * from w_users where ID = {$_REQUEST['uid']}");
     $getUserData = $getUserData[0];
+
+    $getcatName = $db->selectQuery("select category_name from edu_category where ID = {$_REQUEST['parent_category']}");
+    $catName = $getcatName[0];
 }
 
 // Create the Razorpay Order
@@ -87,22 +91,21 @@ $json = json_encode($data);
 $paymentData = array("uID" => $_REQUEST['uid'], "courseID" => $_REQUEST['parent_category'], "orderID" => $razorpayOrderId, "amount" => $amount, "request" => $json);
 $db->insertData("w_orders", $paymentData);
 ?>
-<!--  The entire list of Checkout fields is available at
- https://docs.razorpay.com/docs/checkout-form#checkout-fields -->
-
 
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1  maximum-scale=1 user-scalable=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Purchase Course</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 </head>
 
 <style>
     .razorpay-payment-button {
         color: #fff;
-        background-color: #0dc9e0;
-        border-color: #0dc9e0;
+        background-color: #007bff;
+        border-color: #007bff;
         display: inline-block;
         font-weight: 400;
         text-align: center;
@@ -119,16 +122,47 @@ $db->insertData("w_orders", $paymentData);
         border-radius: .25rem;
     }
 
+    .bg-light {
+        background-color: #e5e5e5 !important;
+    }
+
+    a:hover {
+        color: #ffffff;
+        text-decoration: none;
+    }
+
     .rounded {
         border-radius: 1.25rem !important;
+    }
+
+    .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #3d2f2f5c;
+    }
+
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        margin: 80% 45%;
     }
 </style>
 
 <body>
+
     <div class="container h-100">
         <div class="row align-items-center h-100">
             <div class="col-12">
-                <div class="p-5 bg-primary text-white text-center rounded">
+                <div class="p-5 bg-light text-dark text-center rounded">
+                    <div class="text-center mb-3"><img src="../img/logo.png" class="text-center" style="width: 30%;">
+                    </div>
+
+                    <div>
+                        <h4 class="text-center mb-3"><?php echo $catName['category_name']; ?></h4>
+                    </div>
+
                     <h4>Rs. <?php echo $orderData['amount'] / 100; ?>/-</h4>
 
                     <form action="success.php" method="POST" name="razorpayform">
@@ -139,10 +173,23 @@ $db->insertData("w_orders", $paymentData);
 
                     </form>
                 </div>
+                <div class="text-center">
+                    <a href="index.php" class="razorpay-payment-button my-2 loading">Back To Home</a>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    <script>
+        $('.loading').click(function() {
+            $('body').append('<div class="loader"><div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div></div>');
+            var path = $(this).attr('href');
+            window.location.href = path;
+        });
+    </script>
 </body>
 
 </html>

@@ -24,6 +24,7 @@
                             success: function(data) {
                                 var obj = jQuery.parseJSON(data);
                                 if (obj.data == 1) {
+                                    $('body').append('<div class="loader"><div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div></div>');
                                     window.location = "../index.php";
                                 }
                             }

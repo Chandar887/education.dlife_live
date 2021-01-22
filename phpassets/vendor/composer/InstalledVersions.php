@@ -14,24 +14,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-main',
+    'version' => 'dev-main',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '851e7f35b0767174e9ea7d2ea6a9a8895cd4349d',
     'name' => '__root__',
   ),
   'versions' => 
   array (
     '__root__' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-main',
+      'version' => 'dev-main',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '851e7f35b0767174e9ea7d2ea6a9a8895cd4349d',
     ),
     'ezyang/htmlpurifier' => 
     array (
@@ -68,6 +68,15 @@ private static $installed = array (
       array (
       ),
       'reference' => '9567d9c4c519fbe40de01dbd1e4469dbbb66f46a',
+    ),
+    'mobiledetect/mobiledetectlib' => 
+    array (
+      'pretty_version' => '2.8.34',
+      'version' => '2.8.34.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '6f8113f57a508494ca36acbcfa2dc2d923c7ed5b',
     ),
     'monolog/monolog' => 
     array (

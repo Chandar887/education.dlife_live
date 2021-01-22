@@ -301,13 +301,13 @@ if (isset($_REQUEST['update']) && $_REQUEST['update'] == "update_edu_category") 
 
 //activate course for user
 if (isset($_REQUEST['submit']) && $_REQUEST['submit'] == "activate_course") {
-//    echo "<pre>";
-//    print_r($_REQUEST);
-//    die;
+
     unset($_REQUEST['submit']);
+    $curntdate = date("y-m-d");
+    // echo $db->deleteData("w_active_courses", "expiryTime < $curntdate");die;
     
     foreach($_REQUEST['active_courses'] as $courceID){
-        $courceID;//
+        $courceID;
         $db->deleteData("w_active_courses", "active_courses=$courceID and uID={$_REQUEST['uID']}");
         $expTime = $_REQUEST['expiryTime'][$courceID];//expirte time
         $activeCourse = array("uID" => $_REQUEST['uID'], "active_courses" => $courceID, "expiryTime" => $expTime);

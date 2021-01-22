@@ -1,11 +1,6 @@
 <?php
 include_once("include/quiz_header.php");
-//    $url = $db->site . "cron.php";
-// echo $url;die;
-//
-//
-//$getcatData = $db->selectQuery("select * from `edu_category`");
-//print_r($getcatData);die;
+
 ?>
 
 <style type="text/css">
@@ -40,16 +35,10 @@ include_once("include/quiz_header.php");
         text-align: center;
     }
 
-    /*    .rounded-pill_shadow {
-            box-shadow: 0px 3px 7px 2px #0c080838;
-        }*/
-
     .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons {
         float: none;
     }
 </style>
-
-<!--<div class="container">-->
 
 <section>
 
@@ -99,8 +88,6 @@ include_once("include/quiz_header.php");
 
 
 <!-- view all contests -->
-
-
 <?php
 if (isset($_SESSION["ludouser"])) {
 
@@ -108,15 +95,9 @@ if (isset($_SESSION["ludouser"])) {
 }
 
 $getcatData = $db->selectQuery("select DISTINCT parent_category from `edu_category`");
-//$getcatData = $db->selectQuery("select * from `edu_category`");
-//echo "<pre>";
-//print_r($getcatData);die;
 ?>
 <section>
     <div class="container-fluid">
-
-
-
         <div class="col-md-12 col-12">
 
             <div class="row mt-3">
@@ -132,16 +113,13 @@ $getcatData = $db->selectQuery("select DISTINCT parent_category from `edu_catego
                     if ($catData['parent_category'] != "") {
                         $parentcategory = $catData['parent_category'];
                         $catImage = $db->selectQuery("select * from `edu_category` where category_name = '$parentcategory'");
-                        //                        echo $parentcategory;die;
-                        //                        echo $catImage[0]['id']; 
+                       
                         $expdate = "";
                         $curntDate = "";
                         if (in_array($catImage[0]['id'], array_keys($checkActiveCourse))) {
                             $expdate = $checkActiveCourse[$catImage[0]['id']]['expiryTime'];
-                            //                            echo "expdate ". $expdate;
                             $expdate = strtotime($expdate);
-                            $curntDate = date("m-d-y");
-                            //                            echo "curntdate ". $curntDate;
+                            $curntDate = date("y-m-d");
                             $curntDate = strtotime($curntDate);
                         }
                         $getSubcategories = $db->selectQuery("select * from `edu_category` where parent_category = '$parentcategory'");
@@ -186,6 +164,7 @@ include_once('include/quiz_footer.php');
 
 
 <script type="text/javascript">
+ 
     $(document).ready(function() {
         $('body').on('click', '.category_name', function() {
             var ele = $(this);
@@ -193,14 +172,13 @@ include_once('include/quiz_footer.php');
             var parent = ele.attr('parent');
             var parentID = ele.attr('parentID');
 
-
             if (parent == '6th To 12th') {
                 $('body').append('<div class="loader"><div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div></div>');
                 window.location = "sub-category.php?parent_category=" + parent;
                 exit();
             }
 
-            // var amount = ele.attr('amount');
+            var courseamount = ele.attr('amount');
             var user_id = '<?php echo $userData['ID']; ?>';
             var cat_demo = ele.attr('category-demo');
             var obj = jQuery.parseJSON(cat_demo);
@@ -223,7 +201,7 @@ include_once('include/quiz_footer.php');
             }
             $.confirm({
                 title: "<div class='pt-2 pb-2 pr-3 pl-3'><h6 class='my-auto'>Want to Purchase Course?</h6></div>",
-                content: "<div class='text-center text-primary' style=margin-bottom:-20px;'><b style='font-size: 45px;'></b></div><hr class='w-50 mx-auto'><br><div class='text-center text-primary' style='margin-top: -40px;margin-bottom: 14px;'><b style='font-size: 25px;'>" + parent + "</b></div><form action='payment.php' method='post' class='form-inline' style='justify-content: center;'><span style='font-size:22px;font-weight: 500;'>Rs.</span> <input type='number' name='amount' class='form-control w-50 amount' placeholder='Enter Amount'></form><br>" + demo + " ",
+                content: "<div class='text-center text-primary' style=margin-bottom:-20px;'><b style='font-size: 45px;'></b></div><hr class='w-50 mx-auto'><br><div class='text-center text-primary' style='margin-top: -40px;margin-bottom: 14px;'><b style='font-size: 25px;'>" + parent + "</b></div><form action='payment.php' method='post' class='form-inline' style='justify-content: center;'><span style='font-size:22px;font-weight: 500;'>Rs.</span> <input type='number' name='amount' class='form-control w-50 amount' placeholder='Enter Amount' value=" + courseamount + "></form><br>" + demo + " ",
                 closeIcon: true,
                 buttons: {
                     Pay: {
@@ -240,22 +218,13 @@ include_once('include/quiz_footer.php');
                             }
                         }
                     },
-                    //                    Cancel: function () {
-                    //
-                    //                    }
 
-                },
-
-                //                content: "<div class='pt-2 pb-2 pr-3 pl-3'><h6 class='my-auto'>Want to Purchase Course?</h6></div>"
-
+                }
             });
-
         });
         //        course purchased
         $('.course_purchased').click(function() {
-
             $('body').append('<div class="loader"><div class="spinner-border text-primary" role="status"><span class="sr-only"></span></div></div>');
-
             var ele = $(this);
             var parent_category = ele.attr('parent');
             window.location = "sub-category.php?parent_category=" + parent_category;

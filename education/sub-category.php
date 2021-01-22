@@ -14,13 +14,12 @@ if (isset($_GET['parent_category']) && $_GET['parent_category'] != "") {
         background: #f8f9fa;
         text-align: center;
     }
-
-    /*    .rounded-pill_shadow {
-            box-shadow: 0px 3px 7px 2px #0c080838;
-        }*/
-
     .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons {
         float: none;
+    }
+
+    h6 {
+        font-size: 15px;
     }
 </style>
 
@@ -29,7 +28,7 @@ if (isset($_GET['parent_category']) && $_GET['parent_category'] != "") {
         <div class="container-fluid">
             <div class="row">
                 <img src="<?php echo $catData[0]['cat_image']; ?>" class="rounded-circle" style="width: 18vw; height: 18vw;">
-                <a href="index.php" class="my-auto ml-4 text-white" style="font-size:6vw;"><b><?php echo $parent_category; ?></b><span class="ml-1"><i class="fa fa-edit"></i></span></a>
+                <a href="index.php" class="my-auto ml-4 text-white loading" style="font-size:6vw;"><b><?php echo $parent_category; ?></b><span class="ml-1"><i class="fa fa-edit"></i></span></a>
                 <!-- <a href="index.php" class="mt-2 ml-auto">Change</a> -->
             </div>
         </div>
@@ -68,7 +67,7 @@ if (isset($_GET['parent_category']) && $_GET['parent_category'] != "") {
                             if (in_array($data['id'], array_keys($checkActiveCourse)) && $curntDate < $expdate) {
                                 $exptime = time_elapsed_string($checkActiveCourse[$data['id']]['expiryTime']);
                             ?>
-                                <span class="bg-danger text-white rounded" style="font-size: 10px; padding-left: 3px;padding-right: 3px; float:right; position:absolute;right:15px;">
+                                <span class="bg-danger text-white rounded" style="font-size: 10px; padding-left: 1px;padding-right: 1px; float:right; position:absolute;right:15px;">
                                     <?php echo ($parent_category == '6th To 12th') ? $exptime . ' Left' : ''; ?></span>
                             <?php
                             }
@@ -139,7 +138,7 @@ include_once('include/quiz_footer.php');
             //            console.log(amount);
             $.confirm({
                 title: "<div class='pt-2 pb-2 pr-3 pl-3'><h6 class='my-auto'>Want to Purchase Course?</h6></div>",
-                content: "<div class='text-center text-primary' style=margin-bottom:-20px;'><b style='font-size: 45px;'></b></div><hr class='w-50 mx-auto'><br><div class='text-center text-primary' style='margin-top: -40px;margin-bottom: 14px;'><b style='font-size: 25px;'>" + class_name + "</b></div><form action='payment.php' method='post' class='form-inline' style='justify-content: center;'><span style='font-size:22px;font-weight: 500;'>Rs.</span> <input type='number' name='amount' class='form-control w-50 amount' placeholder='Enter Amount'></form><br>" + demo + " ",
+                content: "<div class='text-center text-primary' style=margin-bottom:-20px;'><b style='font-size: 45px;'></b></div><hr class='w-50 mx-auto'><br><div class='text-center text-primary' style='margin-top: -40px;margin-bottom: 14px;'><b style='font-size: 25px;'>" + class_name + "</b></div><form action='payment.php' method='post' class='form-inline' style='justify-content: center;'><span style='font-size:22px;font-weight: 500;'>Rs.</span> <input type='number' name='amount' class='form-control w-50 amount' placeholder='Enter Amount' value="+ amount +"></form><br>" + demo + " ",
                 //                title: 'Want to Purchase Course?',
                 //                content: '<small>The Course Amount <b style="font-size: 16px;color: #e42929;">Rs.' + amount + '</b> will be debited from your account.</small>',
                 closeIcon: true,

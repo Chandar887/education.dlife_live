@@ -1,32 +1,100 @@
 <?php
 include_once('../database.php');
 
-include_once("controller/userClass.php");
 
+if(!preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo 
+|fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i" 
+, $_SERVER["HTTP_USER_AGENT"])){ 
+    die('Invalid Device!');
+} 
+
+
+$userData = array();
 if (isset($_SESSION['uToken'])) {
     $token = $_SESSION['uToken'];
-    //    echo "select * from w_users where uToken = '$token' and isDisabled='0'";
-    $data = mysqli_query($db->con, "select * from w_users where uToken = '$token' and isDisabled='0'");
-    $userData = mysqli_fetch_assoc($data);
-    $_SESSION['ludouser'] = $userData;
+    if ($userData = ($db->selectQuery("select * from w_users where uToken = '$token'"))) {
+        $userData = $userData[0];
+    } else {
+        unset($_SESSION['uToken']);
+        echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
+        exit;
+    }
 } else {
     echo "<script type='text/javascript'> document.location = '../index.php'; </script>";
     exit;
-    //    echo"<p style='color:white;background-color:#D32F2F;padding:12px;text-align:center;margin:40px;font-size:26px;font-weight:bold;'>Invalid Request</p>";
-    //    die;
 }
 
-//lse if (!isset($_SESSION['ludouser']) && basename($_SERVER['PHP_SELF']) != 'page-payment-response.php') {
-//    echo"<p style='color:white;background-color:#D32F2F;padding:12px;text-align:center;margin:40px;font-size:26px;font-weight:bold;'>Invalid Request</p>";
-//    die;
-//}
+$currenturl = 'http://' . $_SERVER['HTTP_HOST'] . explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+
+// function for pagiation
+function pagination($totaldata, $limit, $offset, $page, $currenturl)
+{
+?>
+    <div class="row">
+        <div class="col-sm-5 text-center">
+            <div class="dataTables_info my-2" id="propertytable_info" role="status" aria-live="polite">Showing <?php echo (($totaldata > 0) ? ($offset + 1) : '0') . ' to ' . (($page * $limit) > $totaldata ? $totaldata : ($page * $limit)) . ' of ' . $totaldata; ?> entries</div>
+        </div>
+        <div class="col-sm-7">
+            <div class="dataTables_paginate paging_simple_numbers" id="propertytable_paginate">
+                <?php
+                //Pagination
+                $getData = $_GET;
+                $currenturl = explode("?", $currenturl)[0];
+                if ($totaldata > $limit) {
+                ?>
+                    <ul class="pagination pagination-sm justify-content-center my-2">
+                        <?php
+                        $total_pages = ceil($totaldata / $limit);
+                        $getData['page'] = 1;
+                        $pagLink = '';
+                        $pagLink .= '<li class="page-item" id="propertytable_next"><a class="page-link" href="' . $currenturl . '?' . http_build_query($getData) . '"><<</a></li>';
+                        if ($page > 1) {
+                            $getData['page'] = ($page - 1);
+                            $pagLink .= '<li class="page-item previous" id="propertytable_previous"><a class="page-link" href="' . $currenturl . '?' . http_build_query($getData) . '"><</a></li>';
+                        } else {
+                            $pagLink .= '<li class="page-item previous disabled" id="propertytable_previous"><a class="page-link"><</a></li>';
+                        }
+
+                        $start = 1;
+                        $end = $total_pages;
+                        if ($total_pages >= 5) {
+                            $start = $page - 2;
+                            $start = $start <= 0 ? 1 : $start;
+                            $end = $page + 2;
+                            $end = $end > $total_pages ? $total_pages : $end;
+                        }
+
+                        $offsetcount = ($start - 1) * $limit;
+                        for ($i = $start; $i <= $end; $i++) {
+                            if ($offsetcount == $offset) {
+                                $pagLink .= '<li class="page-item active"><a class="page-link">' . $i . '</a></li>';
+                                //$pagLink .= '<a href="" class="active">'.$i.'</a>'; 
+                            } else {
+                                $getData['page'] = $i;
+                                $pagLink .= '<li class="page-item"><a class="page-link" href="' . $currenturl . '?' . http_build_query($getData) . '">' . $i . '</a></li>';
+                            }
+                            $offsetcount = $offsetcount + $limit;
+                        }
 
 
-
-$userClass = new userClass();
-$id = $_SESSION["ludouser"]["ID"];
-$query = mysqli_query($db->con, "SELECT * FROM `w_users` WHERE ID='$id'");
-$userData = mysqli_fetch_assoc($query);
+                        if ($page < $total_pages) {
+                            $getData['page'] = ($page + 1);
+                            $pagLink .= '<li class="page-item next" id="propertytable_next"><a class="page-link" href="' . $currenturl . '?' . http_build_query($getData) . '">></a></li>';
+                        } else {
+                            $pagLink .= '<li class="page-item next disabled" id="propertytable_next"><a class="page-link">></a></li>';
+                        }
+                        $getData['page'] = $total_pages;
+                        $pagLink .= '<li class="page-item" id="propertytable_next"><a class="page-link" href="' . $currenturl . '?' . http_build_query($getData) . '">>></a></li>';
+                        echo $pagLink;
+                        ?>
+                    </ul>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+<?php }
 ?>
 
 
@@ -40,39 +108,45 @@ $userData = mysqli_fetch_assoc($query);
     <title>D-life</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="img/logo/favicon.png">
-
-    <!-- Google Fonts
-                    ============================================ -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
-    <!-- Bootstrap CSS
-                    ============================================ -->
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <!-- main CSS
-                    ============================================ -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/jquery-confirm.min.css">
-    <!-- style CSS
-                    ============================================ -->
     <link rel="stylesheet" href="style.css">
-    <!-- responsive CSS
-                    ============================================ -->
     <link rel="stylesheet" href="css/responsive.css">
-    <!-- modernizr JS
-                    ============================================ -->
-    <!--<script src="assets/js/modernizr-2.8.3.min.js"></script>-->
-
     <meta property="og:url" content="https://200wishes.com/ludonew/quizpanel/" />
     <meta property="og:type" content="dlife" />
     <meta property="og:title" content="Dlife" />
     <meta property="og:description" content="Dlife Worlds Best quiz app. Provides you best services." />
     <meta property="og:image" content="http://wearewinner.in/demo/Dashboard/img/logo.png" />
 </head>
+
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // To disable F12 options
+    document.onkeypress = function(event) {
+        event = (event || window.event);
+        if (event.keyCode == 123) {
+            return false;
+        }
+    }
+    document.onmousedown = function(event) {
+        event = (event || window.event);
+        if (event.keyCode == 123) {
+            return false;
+        }
+    }
+    document.onkeydown = function(event) {
+        event = (event || window.event);
+        if (event.keyCode == 123) {
+            return false;
+        }
+    }
+</script> 
+
 <style>
     .fa-sign-out:before {
         content: "\f08b";
@@ -122,10 +196,11 @@ $userData = mysqli_fetch_assoc($query);
     }
 
     .loader {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         right: 0;
+        bottom: 0;
         background: #3d2f2f5c;
     }
 
@@ -135,13 +210,8 @@ $userData = mysqli_fetch_assoc($query);
         margin: 80% 45%;
     }
 </style>
+
 <body>
-    <!-- page loader -->
-    <!-- <div class="loader">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only"></span>
-        </div>
-    </div> -->
 
     <!-- Start Header Top Area -->
     <div class="header-top-area">
@@ -174,54 +244,8 @@ $userData = mysqli_fetch_assoc($query);
                             <a class="dropdown-item" id="logout" href="#"><i class="fa fa-sign-out mr-1"></i> Sign Out</a>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
     <!-- End Header Top Area -->
-
-
-    <!-- Main Menu area start-->
-    <div class="main-menu-area mg-tb-40">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <ul class="nav nav-tabs notika-menu-wrap menu-it-icon-pro">
-                        <li class="active"><a href="index.php"><i class="fa fa-home icons"></i> Home</a>
-                        </li>
-                        <li><a data-toggle="tab" href="#Forms"><i class="fa fa-history icons"></i> Quiz History</a>
-                        </li>
-
-                    </ul>
-                    <div class="tab-content custom-menu-content">
-                        <div id="Home" class="tab-pane in active notika-tab-menu-bg animated flipInX">
-                            <ul class="notika-main-menu-dropdown">
-
-                            </ul>
-                        </div>
-                        <div id="mailbox" class="tab-pane notika-tab-menu-bg animated flipInX">
-                            <ul class="notika-main-menu-dropdown">
-                                <li><a href="user_create_quiz.php">Add New Quiz</a>
-                                </li>
-                                <!--<li><a href="user_show_quiz.php">Play Quiz</a>-->
-                                </li>
-                                <li><a href="user_view_quiz.php">View Quiz</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div id="Forms" class="tab-pane notika-tab-menu-bg animated flipInX">
-                            <ul class="notika-main-menu-dropdown">
-                                <li><a href="user_quiz_history.php">View Quiz History</a>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Main Menu area End-->

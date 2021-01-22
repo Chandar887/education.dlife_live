@@ -149,7 +149,7 @@ class database {
                 $condtion = 'where ' . $condtion;
             }
             $query = "delete from $table $condtion";
-            //echo $query;
+            // echo $query;
             $r = $this->con->query($query) or die("Delete Error: " . mysqli_error($this->con) . " " . $query);
             if ($r == 1)
                 return true;
@@ -335,6 +335,7 @@ use PHPMailer\PHPMailer\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Razorpay\Api\Api;
+
 
 global $api;
 

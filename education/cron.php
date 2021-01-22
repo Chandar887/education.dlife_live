@@ -2,27 +2,21 @@
 
 include_once(__DIR__ . "/../database.php");
 
-//$contestq = mysqli_query($db->con, "SELECT * FROM `quiz_contest` where checked = 0");
 $liveClassData = $db->selectQuery("select * from live_class_data where status = 1");
-//echo "<pre>";
-//print_r($liveClassData);die;
 
 foreach ($liveClassData as $data) {
 
     $live_class_id = $data['id'];
-//    echo "select * from quiz_play_detail where live_class_id = '$live_class_id' order by score DESC,complete_time ASC";die;
     $quizData = $db->selectQuery("select * from quiz_play_detail where live_class_id = '$live_class_id' order by score DESC,complete_time ASC");
     $user_id = $quizData[0]['user_id'];
-//    echo $user_id;die;
-//    print_r($quizData);die;
+
     if ($participantUsers = $db->countRows("quiz_play_detail", "live_class_id='$live_class_id'")) {
 
         $total_amount = $participantUsers * $data['amount'];
 
         $adminCharge = 50;
         $chargeAmount = ($total_amount * $adminCharge) / 100;
-
-
+        
         /*         * CourseProfit* */
         /*         * Level Income */
         $winning_amount = $total_amount - $chargeAmount;
